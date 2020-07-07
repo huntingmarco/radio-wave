@@ -1,0 +1,17 @@
+Pah 02,13,Demonstration path,"A note about path 2, the first demo path",
+0,50,40,LDF7-50A,45
+15,75,20,LDF12-50,30
+1,50,Grassland,10,Trees
+2,45,Grassland,1,Brush
+3,48,Rough rock,0,None
+4,52,Rough rock,0,None
+5,60,Smooth rock,0,None
+6,61,Grassland,20,Trees
+7,60,Lake,0,None
+8,60,Lake,0,None
+9,60,Lake,0,None
+10,61,Rough rock,5,Building
+11,70,Bare soil,2,Trees
+12,53,Grassland,10,Trees
+13,66,Grassland,20,Trees
+14,80,Grassland,3,Trees

@@ -1,0 +1,95 @@
+<?php 
+/*1.purpose: this file is to list up the path data for selecting one path from all paths stored in the database, and
+it uses AJAX to send the selected path to the server and to receive the path data to display.
+2. authors: Group2*/
+    
+session_start(); 
+
+require_once("../includes/db_connection.php");
+require_once("../includes/displayStatus.php");
+require_once("../includes/displayErrors.php");   
+
+function displayData(){
+	$db_conn = connectDB();
+	$qry = "select * from path_info order by pt_id;";
+	//$rs = $db_conn->query($qry);
+	$stmt = $db_conn->prepare($qry);
+	if (!$stmt){
+	//if ($rs->num_rows > 0){
+		echo "<p>Error in view prepare: ".$db_conn->errorCode()."</p>\n<p>Message ".implode($db_conn->errorInfo())."</p>\n";
+		exit(1);
+	}
+	$status = $stmt->execute();
+	if ($stmt->rowCount() > 0){
+		$output = "<table border=\"1\">\n";
+		$output .= "<tr><th>Select path</th><th>Name</th><th>Frequency</th><th>Description</th><th>Note</th></tr>\n";
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+		//while ($row = $rs->fetch_assoc()){
+			
+			$output .= "<tr><td><input type='radio' id='list_select' name='list_select[]' value='" .$row['pt_id']. "'></td><td>"
+				.$row['pt_name']."</td><td id='ptFreq-" .$row['pt_id']. "'>"
+				.$row['pt_frequency']."</td><td id='ptDesc-" .$row['pt_id']. "'>"
+				.$row['pt_description']."</td><td id='ptNote-" .$row['pt_id']. "'>"
+				.$row['pt_note']."</td>"
+				."</tr>\n";
+		}
+		$output .= "</table>\n";
+		echo $output;
+	} else {
+		echo "No posts available\n";
+	}
+}
+
+
+?>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Path Data Calculation</title>
+	<link href="../css/style.css" type="text/css" rel="stylesheet"/>
+	<script src="../js/jquery-3.2.1.js"></script>
+	<script src="js/formCalculatePath_ajax.js"></script> 	
+	<script src="js/Chart.min.js"></script> 	
+	<script src="js/utils.js"></script>
+	<style>
+		canvas{
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+		}
+	</style>
+	
+</head>
+<body>
+	<h2> Information List</h2>
+	<span style="font-weight:bold">[Note] Please, choose an earth curvature factor and a path data to calculate and then click the 'View Results' button</span><br><br><br>
+
+	<form method="POST" id="calculateForm" onsubmit="return false">
+	 
+	Please, choose an earth curvature factor :
+
+	<select id="factors" name="factors" style="font-size: 1em; cursor:pointer;">
+		<option value="">select:</option>
+		<option value="4/3">4/3</option>
+		<option value="1">1</option>
+		<option value="2/3">2/3</option>
+		<option value="infinity">infinity</option>
+	</select>
+	<br><br>
+	
+	<?php 
+
+		displayData();
+		$db_conn= NULL;
+	?>
+	<br>
+	<p>
+	<input type="submit" id="calculateDetails" name="calculate" value="View Results"/>
+	</p>
+	</form>
+		
+
+	<a href="../index.php">Return to menu</a><br><br>
+	<p id="detailResult"></p>
+</body>
+</html>
